@@ -1,23 +1,25 @@
 ﻿#include "Character/AuraEnemy.h"
 
+#include "Aura/Aura.h"
 
-AAuraEnemy::AAuraEnemy()
+void AAuraEnemy::HighlightActor()
 {
-	PrimaryActorTick.bCanEverTick = true;
+	bHighlighted = true;
+	GetMesh()->SetRenderCustomDepth(true);
+	GetMesh()->SetCustomDepthStencilValue(CUSTOM_DEPTH_RED);
+	if (Weapon)
+	{
+		Weapon->SetRenderCustomDepth(true);
+		Weapon->SetCustomDepthStencilValue(CUSTOM_DEPTH_RED);
+	}
 }
 
-void AAuraEnemy::BeginPlay()
+void AAuraEnemy::UnhighlightActor()
 {
-	Super::BeginPlay();
+	bHighlighted = false;
+	GetMesh()->SetRenderCustomDepth(false);
+	if (Weapon)
+	{
+		Weapon->SetRenderCustomDepth(false);
+	}
 }
-
-void AAuraEnemy::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-}
-
-void AAuraEnemy::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
-}
-
