@@ -1,6 +1,17 @@
 ﻿#include "Character/AuraEnemy.h"
 
+#include "AbilitySystemComponent.h"
 #include "Aura/Aura.h"
+
+AAuraEnemy::AAuraEnemy()
+{
+	GetMesh()->SetCollisionResponseToChannel(ECC_Visibility, ECR_Block);
+	AbilitySystemComponent = CreateDefaultSubobject<UAbilitySystemComponent>(TEXT("AbilitySystemComponent"));
+	AbilitySystemComponent->SetIsReplicated(true);
+	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Minimal);
+
+	AttributeSet = CreateDefaultSubobject<UAttributeSet>(TEXT("AttributeSet"));
+}
 
 void AAuraEnemy::HighlightActor()
 {
@@ -22,4 +33,10 @@ void AAuraEnemy::UnhighlightActor()
 	{
 		Weapon->SetRenderCustomDepth(false);
 	}
+}
+
+void AAuraEnemy::BeginPlay()
+{
+	Super::BeginPlay();
+	AbilitySystemComponent->InitAbilityActorInfo(this, this);
 }
