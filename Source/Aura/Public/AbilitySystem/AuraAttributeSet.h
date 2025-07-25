@@ -59,6 +59,11 @@ public:
 
 	/*
 	 * Primary Attributes
+	 * -----------------
+	 * Strength
+	 * Agility
+	 * Intelligence
+	 * Stamina
 	 */
 
 	UPROPERTY(ReplicatedUsing = OnRep_Strength, BlueprintReadOnly, Category = "Primary Attributes")
@@ -76,6 +81,53 @@ public:
 	UPROPERTY(ReplicatedUsing = OnRep_Stamina, BlueprintReadOnly, Category = "Primary Attributes")
 	FGameplayAttributeData Stamina;
 	ATTRIBUTE_ACCESSORS(UAuraAttributeSet, Stamina);
+
+
+	/*
+	 * Secondary Attributes
+	 * -------------------
+	 * Physical Damage (from Strength)
+	 * Magic Damage (from Intelligence)
+	 * Attack Speed (from Agility)
+	 * Max Health (from Stamina)
+	 * Crit Chance (from Agility)
+	 * Block Chance (from Strength + equipment)
+	 * Armor (purely gear-based stat, not a primary)
+	 * Health Regen
+	 * Mana Regen
+	 */
+
+	UPROPERTY(ReplicatedUsing = OnRep_PhysicalDamage, BlueprintReadOnly, Category = "Secondary Attributes")
+	FGameplayAttributeData PhysicalDamage;
+	ATTRIBUTE_ACCESSORS(UAuraAttributeSet, PhysicalDamage);
+
+	UPROPERTY(ReplicatedUsing = OnRep_MagicDamage, BlueprintReadOnly, Category = "Secondary Attributes")
+	FGameplayAttributeData MagicDamage;
+	ATTRIBUTE_ACCESSORS(UAuraAttributeSet, MagicDamage);
+
+	UPROPERTY(ReplicatedUsing = OnRep_AttackSpeed, BlueprintReadOnly, Category = "Secondary Attributes")
+	FGameplayAttributeData AttackSpeed;
+	ATTRIBUTE_ACCESSORS(UAuraAttributeSet, AttackSpeed);
+
+	UPROPERTY(ReplicatedUsing = OnRep_CritChance, BlueprintReadOnly, Category = "Secondary Attributes")
+	FGameplayAttributeData CritChance;
+	ATTRIBUTE_ACCESSORS(UAuraAttributeSet, CritChance);
+
+	UPROPERTY(ReplicatedUsing = OnRep_BlockChance, BlueprintReadOnly, Category = "Secondary Attributes")
+	FGameplayAttributeData BlockChance;
+	ATTRIBUTE_ACCESSORS(UAuraAttributeSet, BlockChance);
+
+	UPROPERTY(ReplicatedUsing = OnRep_Armor, BlueprintReadOnly, Category = "Secondary Attributes")
+	FGameplayAttributeData Armor;
+	ATTRIBUTE_ACCESSORS(UAuraAttributeSet, Armor);
+
+	UPROPERTY(ReplicatedUsing = OnRep_HealthRegen, BlueprintReadOnly, Category = "Secondary Attributes")
+	FGameplayAttributeData HealthRegen;
+	ATTRIBUTE_ACCESSORS(UAuraAttributeSet, HealthRegen);
+
+	UPROPERTY(ReplicatedUsing = OnRep_ManaRegen, BlueprintReadOnly, Category = "Secondary Attributes")
+	FGameplayAttributeData ManaRegen;
+	ATTRIBUTE_ACCESSORS(UAuraAttributeSet, ManaRegen);
 
 
 	/*
@@ -121,7 +173,31 @@ public:
 
 	UFUNCTION()
 	void OnRep_Stamina(const FGameplayAttributeData& OldStamina) const;
-	
+
+	UFUNCTION()
+	void OnRep_PhysicalDamage(const FGameplayAttributeData& OldPhysicalDamage) const;
+
+	UFUNCTION()
+	void OnRep_MagicDamage(const FGameplayAttributeData& OldMagicDamage) const;
+
+	UFUNCTION()
+	void OnRep_AttackSpeed(const FGameplayAttributeData& OldAttackSpeed) const;
+
+	UFUNCTION()
+	void OnRep_CritChance(const FGameplayAttributeData& OldCritChance) const;
+
+	UFUNCTION()
+	void OnRep_BlockChance(const FGameplayAttributeData& OldBlockChance) const;
+
+	UFUNCTION()
+	void OnRep_Armor(const FGameplayAttributeData& OldArmor) const;
+
+	UFUNCTION()
+	void OnRep_HealthRegen(const FGameplayAttributeData& OldHealthRegen) const;
+
+	UFUNCTION()
+	void OnRep_ManaRegen(const FGameplayAttributeData& OldManaRegen) const;
+
 private:
 	void SetEffectProperties(const FGameplayEffectModCallbackData& Data, FEffectProperties& Props) const;
 };
