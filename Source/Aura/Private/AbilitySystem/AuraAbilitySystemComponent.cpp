@@ -15,8 +15,18 @@ void UAuraAbilitySystemComponent::AbilityActorInfoSet()
 			*AuraGameplayTags.Attributes_Secondary_PhysicalDamage.ToString()));
 }
 
+void UAuraAbilitySystemComponent::AddCharacterAbilities(
+	const TArray<TSubclassOf<UGameplayAbility>>& StartUpAbilities)
+{
+	for (const TSubclassOf<UGameplayAbility>& AbilityClass : StartUpAbilities)
+	{
+		FGameplayAbilitySpec AbilitySpec = FGameplayAbilitySpec(AbilityClass, 1);
+		GiveAbilityAndActivateOnce(AbilitySpec);
+	}
+}
+
 void UAuraAbilitySystemComponent::EffectApplied(UAbilitySystemComponent* AbilitySystemComponent,
-												const FGameplayEffectSpec& EffectSpec, FActiveGameplayEffectHandle ActiveEffectHandle)
+                                                const FGameplayEffectSpec& EffectSpec, FActiveGameplayEffectHandle ActiveEffectHandle)
 {
 	FGameplayTagContainer TagContainer;
 	EffectSpec.GetAllAssetTags(TagContainer);
