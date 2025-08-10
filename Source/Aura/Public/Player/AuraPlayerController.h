@@ -44,11 +44,10 @@ private:
 
 	TScriptInterface<ITargetInterface> LastActor;
 	TScriptInterface<ITargetInterface> ThisActor;
+	FHitResult CursorTraceHit;
 
 	void AbilityInputTagPressed(const FGameplayTag InputTag);
-
 	void AbilityInputTagReleased(const FGameplayTag InputTag);
-
 	void AbilityInputTagHeld(const FGameplayTag InputTag);
 
 	UPROPERTY(EditDefaultsOnly, Category = "Input")

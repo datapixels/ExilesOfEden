@@ -82,7 +82,6 @@ void AAuraPlayerController::Move(const FInputActionValue& Value)
 
 void AAuraPlayerController::CursorTrace()
 {
-	FHitResult CursorTraceHit;
 	GetHitResultUnderCursor(ECC_Visibility, false, CursorTraceHit);
 	if (!CursorTraceHit.bBlockingHit) return;
 
@@ -90,45 +89,11 @@ void AAuraPlayerController::CursorTrace()
 
 	ThisActor = CursorTraceHit.GetActor();
 
-	if (LastActor == ThisActor)
+	if (LastActor != ThisActor)
 	{
-		return;
+		if (LastActor != nullptr) LastActor->UnhighlightActor();
+		if (ThisActor != nullptr) ThisActor->HighlightActor();
 	}
-
-	if (LastActor == nullptr)
-	{
-		if (ThisActor != nullptr)
-		{
-			// highlight new actor
-			ThisActor->HighlightActor();
-		}
-		else
-		{
-			// do nothing
-		}
-	}
-	else
-	{
-		if (ThisActor == nullptr)
-		{
-			// unhighlight last actor
-			LastActor->UnhighlightActor();
-		}
-		else
-		{
-			if (LastActor != ThisActor)
-			{
-				// unhighlight last actor and highlight new actor
-				LastActor->UnhighlightActor();
-				ThisActor->HighlightActor();	
-			}
-			else
-			{
-				// do nothing as its same actor
-			}
-		}
-	}
-
 }
 
 void AAuraPlayerController::AbilityInputTagPressed(const FGameplayTag InputTag)
@@ -205,10 +170,14 @@ void AAuraPlayerController::AbilityInputTagHeld(const FGameplayTag InputTag)
 	else
 	{
 		FollowTime += GetWorld()->GetDeltaSeconds();
-		FHitResult Hit;
-		if (GetHitResultUnderCursor(ECC_Visibility, false, Hit))
+		
+		if (CursorTraceHit.bBlockingHit)
 		{
-			CachedDestination = Hit.ImpactPoint;
+			CachedDestination = CursorTraceHit.ImpactPoint;
+		}
+		else if (CachedDestination.IsZero())
+		{
+			CachedDestination = CursorTraceHit.ImpactPoint;
 		}
 
 		if (APawn* ControllerPawn = GetPawn<APawn>())
@@ -240,8 +209,8 @@ void AAuraPlayerController::AutoRun()
 		const FVector Direction = Spline->FindDirectionClosestToWorldLocation(LocationOnSpline, ESplineCoordinateSpace::World);
 		ControlledPawn->AddMovementInput(Direction);
 
-		const float DistanceToDestination = (LocationOnSpline - PlayerLocation).Length();
-		if (DistanceToDestination < AutoRunAcceptanceRadius)
+		const float DistanceToDestination = (LocationOnSpline - CachedDestination).Length();
+		if (DistanceToDestination <= AutoRunAcceptanceRadius)
 		{
 			bAutoRunning = false;
 		}
