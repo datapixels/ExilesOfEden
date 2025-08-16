@@ -38,6 +38,15 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Input")
 	TObjectPtr<UInputAction> MoveAction;
 
+	UPROPERTY(EditAnywhere, Category = "Input")
+	TObjectPtr<UInputAction> ShiftAction;
+
+	void ShiftPressed() { bAutoAttackInDirection = true; }
+	void ShiftReleased() { bAutoAttackInDirection = false; }
+
+	bool bAutoAttackInDirection = false;
+	
+
 	void Move(const FInputActionValue& Value);
 
 	void CursorTrace();

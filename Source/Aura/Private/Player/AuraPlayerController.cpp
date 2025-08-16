@@ -54,10 +54,15 @@ void AAuraPlayerController::SetupInputComponent()
 
 	AuraInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AAuraPlayerController::Move);
 
+	AuraInputComponent->BindAction(ShiftAction, ETriggerEvent::Started, this, &AAuraPlayerController::ShiftPressed);
+	AuraInputComponent->BindAction(ShiftAction, ETriggerEvent::Completed, this, &AAuraPlayerController::ShiftReleased);
+	
 	AuraInputComponent->BindAbilityActions(InputConfig, this,
 		&ThisClass::AbilityInputTagPressed,
 		&ThisClass::AbilityInputTagReleased,
 		&ThisClass::AbilityInputTagHeld);
+
+	
 }
 
 void AAuraPlayerController::Move(const FInputActionValue& Value)
@@ -116,14 +121,12 @@ void AAuraPlayerController::AbilityInputTagReleased(const FGameplayTag InputTag)
 		return;
 	}
 
-	if (bTargeting)
+	if (GetASC())
 	{
-		if (GetASC())
-		{
-			GetASC()->AbilityInputTagReleased(InputTag);	
-		}
+		GetASC()->AbilityInputTagReleased(InputTag);	
 	}
-	else
+	
+	if (!bTargeting && !bAutoAttackInDirection)
 	{
 		APawn* ControllerPawn = GetPawn<APawn>();
 		if (FollowTime < ShortPressThreshold && ControllerPawn != nullptr)
@@ -132,7 +135,7 @@ void AAuraPlayerController::AbilityInputTagReleased(const FGameplayTag InputTag)
 				this,
 				ControllerPawn->GetActorLocation(), CachedDestination);
 
-			if (NavPath != nullptr)
+			if (NavPath != nullptr && NavPath->PathPoints.Num() > 0)
 			{
 				Spline->ClearSplinePoints();
 				for (const FVector& PathPoint : NavPath->PathPoints)
@@ -160,7 +163,7 @@ void AAuraPlayerController::AbilityInputTagHeld(const FGameplayTag InputTag)
 		return;
 	}
 
-	if (bTargeting)
+	if (bTargeting || bAutoAttackInDirection)
 	{
 		if (GetASC())
 		{
@@ -216,4 +219,3 @@ void AAuraPlayerController::AutoRun()
 		}
 	}
 }
-
