@@ -29,12 +29,24 @@ public:
 	/** Combat interface */
 	virtual int32 GetPlayerLevel() override { return Level; }
 
+	virtual void Die() override;
+
 	UPROPERTY(BlueprintAssignable)
 	FOnAttributeChangedSignature OnHealthChanged;
 
 	UPROPERTY(BlueprintAssignable)
 	FOnAttributeChangedSignature OnMaxHealthChanged;
 
+	void HitReactTagChanged(FGameplayTag Tag, int32 NewCount);
+
+	UPROPERTY(BlueprintReadOnly, Category = "Aura|Combat")
+	bool bIsHitReacting = false;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Aura|Combat")
+	float BaseWalkSpeed = 250.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Aura|Combat")
+	float LifeSpan = 5.f;
 		
 protected:
 	virtual void BeginPlay() override;
@@ -50,4 +62,6 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TObjectPtr<UWidgetComponent> HealthBar;
+
+	
 };

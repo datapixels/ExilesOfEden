@@ -93,4 +93,12 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 	Instance.InputTag_4 = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName("InputTag.4"),
 		FString("Input action for ability 4."));
+
+	Instance.Damage = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Damage"),
+		FString("Damage"));
+
+	Instance.Effects_HitReact = UGameplayTagsManager::Get().AddNativeGameplayTag(
+	FName("Effects.HitReact"),
+	FString("Hit react for enemies."));
 }
