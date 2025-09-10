@@ -4,6 +4,7 @@
 #include "AbilitySystem/ExecCalc/ExecCalc_Damage.h"
 
 #include "AbilitySystemComponent.h"
+#include "AuraAbilityTypes.h"
 #include "AuraGameplayTags.h"
 #include "AbilitySystem/AuraAbilitySystemLibrary.h"
 #include "AbilitySystem/AuraAttributeSet.h"
@@ -60,6 +61,8 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 	EvaluationParameters.SourceTags = SourceTags;
 	EvaluationParameters.TargetTags = TargetTags;
 
+	FGameplayEffectContextHandle ContextHandle = Spec.GetContext();
+
 	// Get Damage Set By Caller Magnitude
 	float Damage = Spec.GetSetByCallerMagnitude(FAuraGameplayTags::Get().Damage);
 
@@ -72,20 +75,21 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 	const bool bBlocked = FMath::RandRange(0, 100) < TargetBlockChange;
 	if (bBlocked)
 	{
+		
 		Damage = 0.f;
 	}
-	else 
+	UAuraAbilitySystemLibrary::SetIsBlockedHit(ContextHandle, bBlocked);
+	float SourceCritChance = 0.f;
+	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().CritChanceDef, EvaluationParameters, SourceCritChance);
+	SourceCritChance = FMath::Max<float>(SourceCritChance, 0.0f);
+	const bool bIsCriticalHit = FMath::RandRange(0, 100) < SourceCritChance;
+	if (bIsCriticalHit)
 	{
-		float SourceCritChance = 0.f;
-		ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().CritChanceDef, EvaluationParameters, SourceCritChance);
-		SourceCritChance = FMath::Max<float>(SourceCritChance, 0.0f);
-		const bool bCritChance = FMath::RandRange(0, 100) < SourceCritChance;
-		if (bCritChance)
-		{
-			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Critical Hit!"));
-			Damage = 2.f * Damage;	
-		}
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Critical Hit!"));
+		
+		Damage = 2.f * Damage;	
 	}
+	UAuraAbilitySystemLibrary::SetIsCriticalHit(ContextHandle, bIsCriticalHit);
 
 	// Reduce damage based on target's armor
 	float TargetArmor = 0.f;

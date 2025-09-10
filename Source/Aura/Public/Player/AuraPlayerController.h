@@ -28,7 +28,7 @@ public:
 	AAuraPlayerController();
 	virtual void PlayerTick(float DeltaTime) override;
 	UFUNCTION(Client, Reliable)
-	void ShowDamageNumber(float Damage, ACharacter* Target);
+	void ShowDamageNumber(float Damage, ACharacter* Target, bool bBlockedHit, bool bCriticalHit);
 
 protected:
 	virtual void BeginPlay() override;

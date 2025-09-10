@@ -4,11 +4,14 @@
 #include "AbilitySystem/AuraAbilitySystemLibrary.h"
 
 #include "AbilitySystemComponent.h"
+#include "AuraAbilityTypes.h"
 #include "Game/AuraGameModeBase.h"
 #include "Kismet/GameplayStatics.h"
 #include "Player/AuraPlayerState.h"
 #include "UI/HUD/AuraHUD.h"
 #include "UI/WidgetController/AuraWidgetController.h"
+
+struct FAuraGamplayEffectContext;
 
 UOverlayWidgetController* UAuraAbilitySystemLibrary::GetOverlayWidgetController(const UObject* WorldContextObject)
 {
@@ -86,4 +89,40 @@ UCharacterClassInfo* UAuraAbilitySystemLibrary::GetCharacterClassInfo(const UObj
 	const AAuraGameModeBase* AuraGM = Cast<AAuraGameModeBase>(UGameplayStatics::GetGameMode(WorldContextObject));
 	if (AuraGM == nullptr) return nullptr;
 	return  AuraGM->CharacterClassInfo;
+}
+
+bool UAuraAbilitySystemLibrary::IsBlockedHit(const FGameplayEffectContextHandle& EffectContextHandle)
+{
+	if (const FAuraGamplayEffectContext* AuraContext = static_cast<const FAuraGamplayEffectContext*>(EffectContextHandle.Get()))
+	{
+		return AuraContext->IsBlockedHit();		
+	}
+
+	return false;
+}
+
+bool UAuraAbilitySystemLibrary::IsCriticalHit(const FGameplayEffectContextHandle& EffectContextHandle)
+{
+	if (const FAuraGamplayEffectContext* AuraContext = static_cast<const FAuraGamplayEffectContext*>(EffectContextHandle.Get()))
+	{
+		return AuraContext->IsCriticalHit();		
+	}
+
+	return false;
+}
+
+void UAuraAbilitySystemLibrary::SetIsBlockedHit(FGameplayEffectContextHandle& EffectContextHandle, bool bIsBlocked)
+{
+	if (FAuraGamplayEffectContext* AuraContext = static_cast<FAuraGamplayEffectContext*>(EffectContextHandle.Get()))
+	{
+		AuraContext->SetIsBlockedHit(bIsBlocked);
+	}
+}
+
+void UAuraAbilitySystemLibrary::SetIsCriticalHit(FGameplayEffectContextHandle& EffectContextHandle, bool bIsCritical)
+{
+	if (FAuraGamplayEffectContext* AuraContext = static_cast<FAuraGamplayEffectContext*>(EffectContextHandle.Get()))
+	{
+		AuraContext->SetIsCriticalHit(bIsCritical);
+	}
 }
