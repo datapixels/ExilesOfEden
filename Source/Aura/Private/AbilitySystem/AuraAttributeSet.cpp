@@ -123,54 +123,54 @@ void UAuraAttributeSet::SetEffectProperties(const FGameplayEffectModCallbackData
 void UAuraAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data)
 {
 	Super::PostGameplayEffectExecute(Data);
-
-	FEffectProperties Props;
-	SetEffectProperties(Data, Props);
-
-	if (Data.EvaluatedData.Attribute == GetHealthAttribute())
-	{
-		SetHealth(FMath::Clamp(GetHealth(), 0.f, GetMaxHealth()));
-
-		UE_LOG(LogTemp, Log, TEXT("Changed health on %s to %f"),
-			*GetNameSafe(Props.TargetAvatarActor), GetHealth());
-	}
-
-	if (Data.EvaluatedData.Attribute == GetManaAttribute())
-	{
-		SetMana(FMath::Clamp(GetMana(), 0.f, GetMaxMana()));
-	}
-
-	if (Data.EvaluatedData.Attribute == GetIncomingDamageAttribute())
-	{
-		const float LocalIncomingDamage = GetIncomingDamage();
-		SetIncomingDamage(0.f); // Reset incoming damage after applying it
-		if (LocalIncomingDamage > 0.f)
-        {
-            const float NewHealth = GetHealth() - LocalIncomingDamage;
-            SetHealth(FMath::Clamp(NewHealth, 0.f, GetMaxHealth()));
-
-			const bool bIsDead = NewHealth <= 0.f;
-
-			if (bIsDead)
-			{
-				ICombatInterface* CombatInterface = Cast<ICombatInterface>(Props.TargetAvatarActor);
-				if (CombatInterface)
-				{
-					CombatInterface->Die();
-				}
-			}
-			else {
-				FGameplayTagContainer TagContainer;
-				TagContainer.AddTag(FAuraGameplayTags::Get().Effects_HitReact);
-				Props.TargetASC->TryActivateAbilitiesByTag(TagContainer);
-			}
-
-			bool bBlockedHit = UAuraAbilitySystemLibrary::IsBlockedHit(Props.EffectContextHandle);
-			bool bCriticalHit = UAuraAbilitySystemLibrary::IsCriticalHit(Props.EffectContextHandle);
-			
-			ShowFloatingText(Props, LocalIncomingDamage, bBlockedHit, bCriticalHit);
-        }
-	}
+ //
+	// FEffectProperties Props;
+	// SetEffectProperties(Data, Props);
+ //
+	// if (Data.EvaluatedData.Attribute == GetHealthAttribute())
+	// {
+	// 	SetHealth(FMath::Clamp(GetHealth(), 0.f, GetMaxHealth()));
+ //
+	// 	UE_LOG(LogTemp, Log, TEXT("Changed health on %s to %f"),
+	// 		*GetNameSafe(Props.TargetAvatarActor), GetHealth());
+	// }
+ //
+	// if (Data.EvaluatedData.Attribute == GetManaAttribute())
+	// {
+	// 	SetMana(FMath::Clamp(GetMana(), 0.f, GetMaxMana()));
+	// }
+ //
+	// if (Data.EvaluatedData.Attribute == GetIncomingDamageAttribute())
+	// {
+	// 	const float LocalIncomingDamage = GetIncomingDamage();
+	// 	SetIncomingDamage(0.f); // Reset incoming damage after applying it
+	// 	if (LocalIncomingDamage > 0.f)
+ //        {
+ //            const float NewHealth = GetHealth() - LocalIncomingDamage;
+ //            SetHealth(FMath::Clamp(NewHealth, 0.f, GetMaxHealth()));
+ //
+	// 		const bool bIsDead = NewHealth <= 0.f;
+ //
+	// 		if (bIsDead)
+	// 		{
+	// 			ICombatInterface* CombatInterface = Cast<ICombatInterface>(Props.TargetAvatarActor);
+	// 			if (CombatInterface)
+	// 			{
+	// 				CombatInterface->Die();
+	// 			}
+	// 		}
+	// 		else {
+	// 			FGameplayTagContainer TagContainer;
+	// 			TagContainer.AddTag(FAuraGameplayTags::Get().Effects_HitReact);
+	// 			Props.TargetASC->TryActivateAbilitiesByTag(TagContainer);
+	// 		}
+ //
+	// 		bool bBlockedHit = UAuraAbilitySystemLibrary::IsBlockedHit(Props.EffectContextHandle);
+	// 		bool bCriticalHit = UAuraAbilitySystemLibrary::IsCriticalHit(Props.EffectContextHandle);
+	// 		
+	// 		ShowFloatingText(Props, LocalIncomingDamage, bBlockedHit, bCriticalHit);
+ //        }
+	// }
 }
 
 void UAuraAttributeSet::ShowFloatingText(const FEffectProperties& Props, float DamageAmount, bool bBlockedHit, bool bCriticalHit) const

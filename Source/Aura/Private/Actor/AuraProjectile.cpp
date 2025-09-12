@@ -60,12 +60,20 @@ void AAuraProjectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, 
 		{
 			TargetASC->ApplyGameplayEffectSpecToSelf(*DamageEffectSpecHandle.Data.Get());
 		}
+
+		GetWorldTimerManager().SetTimer(DestructionTimerHandle, this, 
+	   &AAuraProjectile::DestroyProjectile, 0.1f, false);
 		Destroy();
 	}
 	else
 	{
 		bHit = true;
 	}
+}
+
+void AAuraProjectile::DestroyProjectile()
+{
+	Destroy();
 }
 
 void AAuraProjectile::PlayLoopingEffects()

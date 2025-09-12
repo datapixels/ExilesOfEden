@@ -55,5 +55,7 @@ private:
 
 	TObjectPtr<UAudioComponent> LoopingSoundComponent;
 
-	
+	void DestroyProjectile();
+
+	FTimerHandle DestructionTimerHandle;
 };
