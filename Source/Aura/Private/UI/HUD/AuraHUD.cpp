@@ -10,7 +10,6 @@
 
 UOverlayWidgetController* AAuraHUD::GetOverlayWidgetController(const FWidgetControllerParams& WidgetControllerParams)
 {
-	Super::BeginPlay();
 	if (OverlayWidgetController == nullptr)
 	{
 		OverlayWidgetController = NewObject<UOverlayWidgetController>(this, OverlayWidgetControllerClass);
@@ -25,7 +24,6 @@ UOverlayWidgetController* AAuraHUD::GetOverlayWidgetController(const FWidgetCont
 UAttributeMenuWidgetController* AAuraHUD::GetAttributeMenuWidgetController(
 	const FWidgetControllerParams& WidgetControllerParams)
 {
-	Super::BeginPlay();
 	if (AttributeMenuWidgetController == nullptr)
 	{
 		AttributeMenuWidgetController = NewObject<UAttributeMenuWidgetController>(this, AttributeMenuWidgetControllerClass);

@@ -16,12 +16,12 @@ public:
 	void SetIsCriticalHit(bool bInIsCriticalHit) { bIsCriticalHit = bInIsCriticalHit; }
 	void SetIsBlockedHit(bool bInIsBlockedHit) { bIsBlockedHit = bInIsBlockedHit; }
 	
-	virtual UScriptStruct* GetScriptStruct() const
+	virtual UScriptStruct* GetScriptStruct() const override
 	{
 		return FGameplayEffectContext::StaticStruct();
 	}
 
-	virtual FAuraGameplayEffectContext* Duplicate() const
+	virtual FAuraGameplayEffectContext* Duplicate() const override
 	{
 		FAuraGameplayEffectContext* NewContext = new FAuraGameplayEffectContext();
 		*NewContext = *this;
@@ -34,7 +34,7 @@ public:
 	}
 
 	
-	virtual bool NetSerialize(FArchive& Ar, class UPackageMap* Map, bool& bOutSuccess);
+	virtual bool NetSerialize(FArchive& Ar, class UPackageMap* Map, bool& bOutSuccess) override;
 	
 protected:
 

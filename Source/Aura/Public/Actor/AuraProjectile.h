@@ -53,6 +53,7 @@ private:
 	void PlayImpactEffects();
 	void PlayLoopingEffects();
 
+	UPROPERTY()
 	TObjectPtr<UAudioComponent> LoopingSoundComponent;
 
 	void DestroyProjectile();
