@@ -61,7 +61,7 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 	EvaluationParameters.SourceTags = SourceTags;
 	EvaluationParameters.TargetTags = TargetTags;
 
-	FGameplayEffectContextHandle ContextHandle = Spec.GetContext();
+	
 
 	// Get Damage Set By Caller Magnitude
 	float Damage = Spec.GetSetByCallerMagnitude(FAuraGameplayTags::Get().Damage);
@@ -73,12 +73,13 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 	TargetBlockChange = FMath::Max<float>(TargetBlockChange, 0.0f);
 
 	const bool bBlocked = FMath::RandRange(0, 100) < TargetBlockChange;
-	if (bBlocked)
-	{
-		
-		Damage = 0.f;
-	}
+
+	FGameplayEffectContextHandle ContextHandle = Spec.GetContext();
+	
 	UAuraAbilitySystemLibrary::SetIsBlockedHit(ContextHandle, bBlocked);
+
+	Damage = bBlocked ? 0.f: Damage;
+	
 	float SourceCritChance = 0.f;
 	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().CritChanceDef, EvaluationParameters, SourceCritChance);
 	SourceCritChance = FMath::Max<float>(SourceCritChance, 0.0f);

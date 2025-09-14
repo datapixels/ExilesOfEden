@@ -35,7 +35,11 @@ void AAuraPlayerController::ShowDamageNumber_Implementation(float Damage, AChara
 		UDamageTextComponent* DamageText = NewObject<UDamageTextComponent>(Target, DamageTextComponentClass);
 		DamageText->RegisterComponent();
 		DamageText->AttachToComponent(Target->GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
+		const FTransform& TargetTransform = Target->GetActorTransform();
+		FVector Offset(0.f, 0.f, 100.f); // Offset above the target
+		FVector Location = TargetTransform.TransformPosition(Offset);
 		DamageText->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
+		DamageText->SetWorldLocation(Location);
 		DamageText->SetDamageText(Damage, bBlockedHit, bCriticalHit);
 	}
 	

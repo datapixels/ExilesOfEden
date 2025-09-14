@@ -1,22 +1,29 @@
-﻿
-#pragma once
+﻿#pragma once
 
 #include "GameplayEffectTypes.h"
 #include "AuraAbilityTypes.generated.h"
 
 USTRUCT(BlueprintType)
-struct FAuraGamplayEffectContext : public FGameplayEffectContext
+struct FAuraGameplayEffectContext : public FGameplayEffectContext
 {
-	GENERATED_BODY();
+	GENERATED_BODY()
+	
 public:
+	
+	bool IsCriticalHit() const { return bIsCriticalHit; }
+	bool IsBlockedHit() const { return bIsBlockedHit; }
+
+	void SetIsCriticalHit(bool bInIsCriticalHit) { bIsCriticalHit = bInIsCriticalHit; }
+	void SetIsBlockedHit(bool bInIsBlockedHit) { bIsBlockedHit = bInIsBlockedHit; }
+	
 	virtual UScriptStruct* GetScriptStruct() const
 	{
-		return StaticStruct();
+		return FGameplayEffectContext::StaticStruct();
 	}
 
-	virtual FAuraGamplayEffectContext* Duplicate() const
+	virtual FAuraGameplayEffectContext* Duplicate() const
 	{
-		FAuraGamplayEffectContext* NewContext = new FAuraGamplayEffectContext();
+		FAuraGameplayEffectContext* NewContext = new FAuraGameplayEffectContext();
 		*NewContext = *this;
 		if (GetHitResult())
 		{
@@ -26,28 +33,21 @@ public:
 		return NewContext;
 	}
 
-	bool IsCriticalHit() const { return bIsCriticalHit; }
-	bool IsBlockedHit() const { return bIsBlockedHit; }
-
-	void SetIsCriticalHit(bool bInIsCriticalHit) { bIsCriticalHit = bInIsCriticalHit; }
-	void SetIsBlockedHit(bool bInIsBlockedHit) { bIsBlockedHit = bInIsBlockedHit; }
 	
+	virtual bool NetSerialize(FArchive& Ar, class UPackageMap* Map, bool& bOutSuccess);
 	
-
-	virtual bool NetSerialize(FArchive& Ar, class UPackageMap* Map, bool& bOutSuccess) override;
-	
-
 protected:
+
+	UPROPERTY()
+	bool bIsBlockedHit = false;
 	
 	UPROPERTY()
 	bool bIsCriticalHit = false;
 
-	UPROPERTY()
-	bool bIsBlockedHit = false;
 };
 
 template<>
-struct TStructOpsTypeTraits<FAuraGamplayEffectContext> : TStructOpsTypeTraitsBase2<FAuraGamplayEffectContext>
+struct TStructOpsTypeTraits<FAuraGameplayEffectContext> : TStructOpsTypeTraitsBase2<FAuraGameplayEffectContext>
 {
 	enum
 	{
