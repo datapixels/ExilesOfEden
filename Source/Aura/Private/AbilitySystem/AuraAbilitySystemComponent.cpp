@@ -9,11 +9,6 @@
 void UAuraAbilitySystemComponent::AbilityActorInfoSet()
 {
 	OnGameplayEffectAppliedDelegateToSelf.AddUObject(this, &UAuraAbilitySystemComponent::ClientEffectApplied);
-
-	const FAuraGameplayTags& AuraGameplayTags = FAuraGameplayTags::Get();
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green,
-		FString::Printf(TEXT("Aura Ability System Component initialized with Gameplay Tags: %s"),
-			*AuraGameplayTags.Attributes_Secondary_PhysicalDamage.ToString()));
 }
 
 void UAuraAbilitySystemComponent::AddCharacterAbilities(

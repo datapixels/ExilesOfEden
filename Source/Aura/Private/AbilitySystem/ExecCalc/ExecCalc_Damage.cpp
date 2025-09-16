@@ -55,13 +55,9 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 
 	const FGameplayTagContainer* SourceTags = Spec.CapturedSourceTags.GetAggregatedTags();
 	const FGameplayTagContainer* TargetTags = Spec.CapturedTargetTags.GetAggregatedTags();
-
 	FAggregatorEvaluateParameters EvaluationParameters;
-
 	EvaluationParameters.SourceTags = SourceTags;
 	EvaluationParameters.TargetTags = TargetTags;
-
-	
 
 	// Get Damage Set By Caller Magnitude
 	float Damage = Spec.GetSetByCallerMagnitude(FAuraGameplayTags::Get().Damage);
@@ -86,8 +82,6 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 	const bool bIsCriticalHit = FMath::RandRange(0, 100) < SourceCritChance;
 	if (bIsCriticalHit)
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Critical Hit!"));
-		
 		Damage = 2.f * Damage;	
 	}
 	UAuraAbilitySystemLibrary::SetIsCriticalHit(ContextHandle, bIsCriticalHit);
