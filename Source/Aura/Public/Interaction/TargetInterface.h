@@ -24,4 +24,10 @@ class AURA_API ITargetInterface
 public:
 	virtual void HighlightActor() = 0;
 	virtual void UnhighlightActor() = 0;
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void SetCombatTarget(AActor* NewTarget);
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	AActor* GetCombatTarget();
 };

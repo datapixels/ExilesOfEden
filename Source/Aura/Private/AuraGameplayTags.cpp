@@ -69,6 +69,12 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 		FName("Attributes.Secondary.MaxMana"),
 		FString("Maximum mana of the character."));
 
+	// Resistance Attributes
+	Instance.Attributes_Resistance_Fire = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Attributes.Resistance.Fire"),
+		FString("Resistance against fire damage."));
+
+
 	// Input Tags
 	Instance.InputTag_LMB = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName("InputTag.LMB"),
@@ -98,13 +104,80 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 		FName("Damage"),
 		FString("Damage"));
 
+	/*
+	 * Damage Types
+	 */
 	Instance.Damage_Fire = UGameplayTagsManager::Get().AddNativeGameplayTag(
-	FName("Damage.Fire"),
-	FString("Fire Damage Type"));
+		FName("Damage.Fire"),
+		FString("Fire Damage Type"));
 
-	Instance.DamageTypes.Add(Instance.Damage_Fire);
+	Instance.Damage_Cold = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Damage.Cold"),
+		FString("Cold Damage Type"));
 
+	Instance.Damage_Poison = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Damage.Poison"),
+		FString("Poison Damage Type"));
+
+	Instance.Damage_Physical = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Damage.Physical"),
+		FString("Physical Damage Type"));
+
+
+	/*
+	 * Resistances
+	 */
+
+	Instance.Attributes_Resistance_Fire = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Attributes.Resistance.Fire"),
+		FString("Resistance against fire damage."));
+
+	Instance.Attributes_Resistance_Cold = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Attributes.Resistance.Cold"),
+		FString("Resistance against cold damage."));
+
+	Instance.Attributes_Resistance_Poison = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Attributes.Resistance.Poison"),
+		FString("Resistance against poison damage."));
+
+	Instance.Attributes_Resistance_Physical = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Attributes.Resistance.Physical"),
+		FString("Resistance against physical damage."));
+
+	/*
+	 * Map Damage Types to Resistances
+	 */
+	Instance.DamageTypesToResistances.Add(Instance.Damage_Fire, Instance.Attributes_Resistance_Fire);
+	Instance.DamageTypesToResistances.Add(Instance.Damage_Cold, Instance.Attributes_Resistance_Cold);
+	Instance.DamageTypesToResistances.Add(Instance.Damage_Poison, Instance.Attributes_Resistance_Poison);
+	Instance.DamageTypesToResistances.Add(Instance.Damage_Physical, Instance.Attributes_Resistance_Physical);
+
+	/*
+	 * Effects
+	 */
 	Instance.Effects_HitReact = UGameplayTagsManager::Get().AddNativeGameplayTag(
-	FName("Effects.HitReact"),
-	FString("Hit react for enemies."));
+		FName("Effects.HitReact"),
+		FString("Hit react for enemies."));
+
+	/*
+	* Abilities
+	*/
+	Instance.Abilities_Attack = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Abilities.Attack"),
+		FString("Attack Ability Tag."));
+
+	/*
+	 * Montages
+	 */
+	Instance.Montage_Attack_Weapon = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Montage.Attack.Weapon"),
+		FString("Weapon attack montage tag."));
+
+	Instance.Montage_Attack_LeftHand = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Montage.Attack.LeftHand"),
+		FString("Left hand attack montage tag."));
+
+	Instance.Montage_Attack_RightHand = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Montage.Attack.RightHand"),
+		FString("Right hand attack montage tag."));
 }

@@ -30,7 +30,7 @@ void AAuraPlayerController::PlayerTick(float DeltaTime)
 
 void AAuraPlayerController::ShowDamageNumber_Implementation(float Damage, ACharacter* Target, bool bBlockedHit, bool bCriticalHit)
 {
-	if (IsValid(Target) && DamageTextComponentClass)
+	if (IsValid(Target) && DamageTextComponentClass && IsLocalController())
 	{
 		UDamageTextComponent* DamageText = NewObject<UDamageTextComponent>(Target, DamageTextComponentClass);
 		DamageText->RegisterComponent();
@@ -162,6 +162,8 @@ void AAuraPlayerController::AbilityInputTagReleased(const FGameplayTag InputTag)
 					Spline->AddSplinePoint(PathPoint, ESplineCoordinateSpace::World, false);
 					DrawDebugSphere(GetWorld(), PathPoint, 8.f, 8, FColor::Green, false, 5.f);
 				}
+
+				
 				CachedDestination = NavPath->PathPoints.Last();
 				bAutoRunning = true;
 			}

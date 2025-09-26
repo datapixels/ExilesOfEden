@@ -135,6 +135,26 @@ public:
 	FGameplayAttributeData ManaRegen;
 	ATTRIBUTE_ACCESSORS(UAuraAttributeSet, ManaRegen);
 
+	/*
+	 * Resistance Attributes
+	 */
+	
+	UPROPERTY(ReplicatedUsing = OnRep_FireResistance, BlueprintReadOnly, Category = "Resistance Attributes")
+	FGameplayAttributeData FireResistance;
+	ATTRIBUTE_ACCESSORS(UAuraAttributeSet, FireResistance);
+
+	UPROPERTY(ReplicatedUsing = OnRep_ColdResistance, BlueprintReadOnly, Category = "Resistance Attributes")
+	FGameplayAttributeData ColdResistance;
+	ATTRIBUTE_ACCESSORS(UAuraAttributeSet, ColdResistance);
+
+	UPROPERTY(ReplicatedUsing = OnRep_PoisonResistance, BlueprintReadOnly, Category = "Resistance Attributes")
+	FGameplayAttributeData PoisonResistance;
+	ATTRIBUTE_ACCESSORS(UAuraAttributeSet, PoisonResistance);
+
+	UPROPERTY(ReplicatedUsing = OnRep_PhysicalResistance, BlueprintReadOnly, Category = "Resistance Attributes")
+	FGameplayAttributeData PhysicalResistance;
+	ATTRIBUTE_ACCESSORS(UAuraAttributeSet, PhysicalResistance);
+	
 
 	/*
 	 * Vital Attributes
@@ -211,6 +231,18 @@ public:
 
 	UFUNCTION()
 	void OnRep_ManaRegen(const FGameplayAttributeData& OldManaRegen) const;
+
+	UFUNCTION()
+	void OnRep_FireResistance(const FGameplayAttributeData& OldFireResistance) const;
+
+	UFUNCTION()
+	void OnRep_ColdResistance(const FGameplayAttributeData& OldColdResistance) const;
+
+	UFUNCTION()
+	void OnRep_PoisonResistance(const FGameplayAttributeData& OldPoisonResistance) const;
+
+	UFUNCTION()
+	void OnRep_PhysicalResistance(const FGameplayAttributeData& OldPhysicalResistance) const;
 
 private:
 	void SetEffectProperties(const FGameplayEffectModCallbackData& Data, FEffectProperties& Props) const;
