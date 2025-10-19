@@ -64,7 +64,6 @@ void AAuraCharacterBase::MultiCastHandleDeath_Implementation()
 FVector AAuraCharacterBase::GetCombatSocketsLocation_Implementation(const FGameplayTag& MontageTag)
 {
 	check(Weapon);
-	const FAuraGameplayTags& GameplayTags = FAuraGameplayTags::Get();
 	if (MontageTag.MatchesTagExact(FAuraGameplayTags::Get().Montage_Attack_Weapon) && IsValid(Weapon))
 	{
 		return Weapon->GetSocketLocation(WeaponTipSocketName);	
@@ -77,9 +76,7 @@ FVector AAuraCharacterBase::GetCombatSocketsLocation_Implementation(const FGamep
 	{
 		return GetMesh()->GetSocketLocation(RightHandSocketName);	
 	}
-		
 	return FVector();	
-	
 }
 
 bool AAuraCharacterBase::IsDead_Implementation() const

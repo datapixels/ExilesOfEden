@@ -99,6 +99,10 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 	Instance.InputTag_4 = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName("InputTag.4"),
 		FString("Input action for ability 4."));
+	
+	Instance.InputTag_Roll = UGameplayTagsManager::Get().AddNativeGameplayTag(
+	FName("InputTag.Roll"),
+	FString("Input action for ability Roll."));
 
 	Instance.Damage = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName("Damage"),

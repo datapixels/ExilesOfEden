@@ -2,8 +2,8 @@
 
 
 #include "AbilitySystem/AbilityTasks/TargetDataUnderMouse.h"
-
 #include "AbilitySystemComponent.h"
+#include "GameFramework/PlayerController.h"
 
 UTargetDataUnderMouse* UTargetDataUnderMouse::CreateTargetDataUnderMouse(UGameplayAbility* OwningAbility)
 {
@@ -17,7 +17,7 @@ void UTargetDataUnderMouse::Activate()
 	const bool isLocallyControlled = Ability->GetCurrentActorInfo()->IsLocallyControlled();
 	if (isLocallyControlled)
 	{
-		SendMouseCursorData();
+		SendTargetData();
 	}
 	else
 	{
@@ -35,20 +35,71 @@ void UTargetDataUnderMouse::Activate()
 	
 }
 
-void UTargetDataUnderMouse::SendMouseCursorData()
+FGameplayAbilityTargetDataHandle UTargetDataUnderMouse::GetTargetData()
 {
-	FScopedPredictionWindow ScopedPrediction(AbilitySystemComponent.Get());
-	
-
-	// Get location under the mouse cursor
 	APlayerController* PlayerController = Ability->GetCurrentActorInfo()->PlayerController.Get();
 	FHitResult HitResult;
-	PlayerController->GetHitResultUnderCursor(ECC_Visibility, false, HitResult);
+	
+	// Get the hit location based on input device
+	float MouseX, MouseY;
+	if (PlayerController->GetMousePosition(MouseX, MouseY))
+	{
+		// Mouse input - use cursor position
+		PlayerController->GetHitResultUnderCursor(ECC_Visibility, false, HitResult);
+	}
+	else
+	{
+		// Gamepad input - use analog stick direction
+		APawn* ControlledPawn = PlayerController->GetPawn();
+		if (ControlledPawn)
+		{
+			const FVector Start = ControlledPawn->GetActorLocation();
+			
+			// Get the right stick X and Y values
+			float StickX = 0.f;
+			float StickY = 0.f;
+			PlayerController->GetInputAnalogStickState(EControllerAnalogStick::CAS_RightStick, StickX, StickY);
+			
+			FVector Direction;
+			if (FMath::Abs(StickX) > 0.1f || FMath::Abs(StickY) > 0.1f)
+			{
+				// If stick has meaningful input, use that direction
+				Direction = FVector(StickY, StickX, 0.f).GetSafeNormal();
+			}
+			else
+			{
+				// If stick is neutral, fall back to actor forward direction
+				Direction = ControlledPawn->GetActorForwardVector();
+			}
+			
+			const FVector End = Start + (Direction * 10000.f); // 100 meters in stick direction
+
+			FCollisionQueryParams QueryParams;
+			QueryParams.AddIgnoredActor(ControlledPawn);
+			
+			PlayerController->GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECC_Visibility, QueryParams);
+			if (!HitResult.bBlockingHit)
+			{
+				// If we didn't hit anything, use the end point
+				HitResult.Location = End;
+				HitResult.ImpactPoint = End;
+			}
+		}
+	}
 
 	FGameplayAbilityTargetDataHandle DataHandle;
 	FGameplayAbilityTargetData_SingleTargetHit* TargetData = new FGameplayAbilityTargetData_SingleTargetHit();
 	TargetData->HitResult = HitResult;
 	DataHandle.Add(TargetData);
+	
+	return DataHandle;
+}
+
+void UTargetDataUnderMouse::SendTargetData()
+{
+	FScopedPredictionWindow ScopedPrediction(AbilitySystemComponent.Get());
+	
+	FGameplayAbilityTargetDataHandle DataHandle = GetTargetData();
 
 	AbilitySystemComponent->ServerSetReplicatedTargetData(
 		GetAbilitySpecHandle(),

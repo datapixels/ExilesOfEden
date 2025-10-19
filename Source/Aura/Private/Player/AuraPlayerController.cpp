@@ -25,7 +25,6 @@ void AAuraPlayerController::PlayerTick(float DeltaTime)
 {
 	Super::PlayerTick(DeltaTime);
 	CursorTrace();
-	AutoRun();
 }
 
 void AAuraPlayerController::ShowDamageNumber_Implementation(float Damage, ACharacter* Target, bool bBlockedHit, bool bCriticalHit)
@@ -72,7 +71,7 @@ void AAuraPlayerController::SetupInputComponent()
 	UAuraInputComponent* AuraInputComponent = CastChecked<UAuraInputComponent>(InputComponent);
 
 	AuraInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AAuraPlayerController::Move);
-
+	AuraInputComponent->BindAction(RollAction, ETriggerEvent::Started, this, &AAuraPlayerController::RollPressed);
 	AuraInputComponent->BindAction(ShiftAction, ETriggerEvent::Started, this, &AAuraPlayerController::ShiftPressed);
 	AuraInputComponent->BindAction(ShiftAction, ETriggerEvent::Completed, this, &AAuraPlayerController::ShiftReleased);
 	
@@ -82,6 +81,11 @@ void AAuraPlayerController::SetupInputComponent()
 		&ThisClass::AbilityInputTagHeld);
 
 	
+}
+
+void AAuraPlayerController::RollPressed()
+{
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Roll Pressed"));
 }
 
 void AAuraPlayerController::Move(const FInputActionValue& Value)
@@ -125,7 +129,6 @@ void AAuraPlayerController::AbilityInputTagPressed(const FGameplayTag InputTag)
 	if (InputTag.MatchesTagExact(FAuraGameplayTags::Get().InputTag_LMB))
 	{
 		bTargeting = ThisActor != nullptr;
-		bAutoRunning = false;	
 	}
 }
 
@@ -145,71 +148,58 @@ void AAuraPlayerController::AbilityInputTagReleased(const FGameplayTag InputTag)
 		GetASC()->AbilityInputTagReleased(InputTag);	
 	}
 	
-	if (!bTargeting && !bAutoAttackInDirection)
-	{
-		APawn* ControllerPawn = GetPawn<APawn>();
-		if (FollowTime < ShortPressThreshold && ControllerPawn != nullptr)
-		{
-			UNavigationPath* NavPath = UNavigationSystemV1::FindPathToLocationSynchronously(
-				this,
-				ControllerPawn->GetActorLocation(), CachedDestination);
-
-			if (NavPath != nullptr && NavPath->PathPoints.Num() > 0)
-			{
-				Spline->ClearSplinePoints();
-				for (const FVector& PathPoint : NavPath->PathPoints)
-				{
-					Spline->AddSplinePoint(PathPoint, ESplineCoordinateSpace::World, false);
-					DrawDebugSphere(GetWorld(), PathPoint, 8.f, 8, FColor::Green, false, 5.f);
-				}
-
-				
-				CachedDestination = NavPath->PathPoints.Last();
-				bAutoRunning = true;
-			}
-		}
-		FollowTime = 0.f;
-		bTargeting = false;
-	}
+	// if (!bTargeting && !bAutoAttackInDirection)
+	// {
+	// 	APawn* ControllerPawn = GetPawn<APawn>();
+	// 	if (FollowTime < ShortPressThreshold && ControllerPawn != nullptr)
+	// 	{
+	// 		UNavigationPath* NavPath = UNavigationSystemV1::FindPathToLocationSynchronously(
+	// 			this,
+	// 			ControllerPawn->GetActorLocation(), CachedDestination);
+	//
+	// 		if (NavPath != nullptr && NavPath->PathPoints.Num() > 0)
+	// 		{
+	// 			Spline->ClearSplinePoints();
+	// 			for (const FVector& PathPoint : NavPath->PathPoints)
+	// 			{
+	// 				Spline->AddSplinePoint(PathPoint, ESplineCoordinateSpace::World, false);
+	// 			}
+	//
+	// 			
+	// 			CachedDestination = NavPath->PathPoints.Last();
+	// 			bAutoRunning = true;
+	// 		}
+	// 	}
+	// 	FollowTime = 0.f;
+	// 	bTargeting = false;
+	// }
 }
 
 void AAuraPlayerController::AbilityInputTagHeld(const FGameplayTag InputTag)
 {
-	if (!InputTag.MatchesTagExact(FAuraGameplayTags::Get().InputTag_LMB))
+	if (GetASC())
 	{
-		if (GetASC())
-		{
-			GetASC()->AbilityInputTagHeld(InputTag);	
-		}
-		return;
+		GetASC()->AbilityInputTagHeld(InputTag);	
 	}
-
-	if (bTargeting || bAutoAttackInDirection)
-	{
-		if (GetASC())
-		{
-			GetASC()->AbilityInputTagHeld(InputTag);	
-		}
-	}
-	else
-	{
-		FollowTime += GetWorld()->GetDeltaSeconds();
-		
-		if (CursorTraceHit.bBlockingHit)
-		{
-			CachedDestination = CursorTraceHit.ImpactPoint;
-		}
-		else if (CachedDestination.IsZero())
-		{
-			CachedDestination = CursorTraceHit.ImpactPoint;
-		}
-
-		if (APawn* ControllerPawn = GetPawn<APawn>())
-		{
-			const FVector WorldDirection = (CachedDestination - ControllerPawn->GetActorLocation()).GetSafeNormal();
-			ControllerPawn->AddMovementInput(WorldDirection, 1.f);
-		}
-	}
+	// else
+	// {
+	// 	FollowTime += GetWorld()->GetDeltaSeconds();
+	// 	
+	// 	if (CursorTraceHit.bBlockingHit)
+	// 	{
+	// 		CachedDestination = CursorTraceHit.ImpactPoint;
+	// 	}
+	// 	else if (CachedDestination.IsZero())
+	// 	{
+	// 		CachedDestination = CursorTraceHit.ImpactPoint;
+	// 	}
+	//
+	// 	if (APawn* ControllerPawn = GetPawn<APawn>())
+	// 	{
+	// 		const FVector WorldDirection = (CachedDestination - ControllerPawn->GetActorLocation()).GetSafeNormal();
+	// 		ControllerPawn->AddMovementInput(WorldDirection, 1.f);
+	// 	}
+	// }
 }
 
 UAuraAbilitySystemComponent* AAuraPlayerController::GetASC()
@@ -222,21 +212,21 @@ UAuraAbilitySystemComponent* AAuraPlayerController::GetASC()
 	return AuraAbilitySystemComponent;
 }
 
-void AAuraPlayerController::AutoRun()
-{
-	if (!bAutoRunning) return;
-	
-	if (APawn* ControlledPawn = GetPawn<APawn>())
-	{
-		const FVector PlayerLocation = ControlledPawn->GetActorLocation();
-		const FVector LocationOnSpline = Spline->FindLocationClosestToWorldLocation(PlayerLocation, ESplineCoordinateSpace::World);
-		const FVector Direction = Spline->FindDirectionClosestToWorldLocation(LocationOnSpline, ESplineCoordinateSpace::World);
-		ControlledPawn->AddMovementInput(Direction);
-
-		const float DistanceToDestination = (LocationOnSpline - CachedDestination).Length();
-		if (DistanceToDestination <= AutoRunAcceptanceRadius)
-		{
-			bAutoRunning = false;
-		}
-	}
-}
+// void AAuraPlayerController::AutoRun()
+// {
+// 	if (!bAutoRunning) return;
+// 	
+// 	if (APawn* ControlledPawn = GetPawn<APawn>())
+// 	{
+// 		const FVector PlayerLocation = ControlledPawn->GetActorLocation();
+// 		const FVector LocationOnSpline = Spline->FindLocationClosestToWorldLocation(PlayerLocation, ESplineCoordinateSpace::World);
+// 		const FVector Direction = Spline->FindDirectionClosestToWorldLocation(LocationOnSpline, ESplineCoordinateSpace::World);
+// 		ControlledPawn->AddMovementInput(Direction);
+//
+// 		const float DistanceToDestination = (LocationOnSpline - CachedDestination).Length();
+// 		if (DistanceToDestination <= AutoRunAcceptanceRadius)
+// 		{
+// 			bAutoRunning = false;
+// 		}
+// 	}
+// }

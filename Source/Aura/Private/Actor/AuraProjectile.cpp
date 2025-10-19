@@ -9,6 +9,7 @@
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "NiagaraFunctionLibrary.h"
+#include "AbilitySystem/AuraAbilitySystemLibrary.h"
 #include "Aura/Aura.h"
 #include "Components/AudioComponent.h"
 
@@ -53,10 +54,22 @@ void AAuraProjectile::Destroyed()
 void AAuraProjectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
                                       UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (DamageEffectSpecHandle.Data.IsValid() && DamageEffectSpecHandle.Data.Get()->GetContext().GetEffectCauser() == OtherActor)
+	if (DamageEffectSpecHandle.Data.IsValid() == false)
 	{
+		// No damage effect so ignore
+		return;
+	}
+	const AActor* EffectCauser = DamageEffectSpecHandle.Data.Get()->GetContext().GetEffectCauser();
+	if (EffectCauser  == OtherActor)
+	{
+		// This actor so ignore
 		return;
 	};
+	if (UAuraAbilitySystemLibrary::IsNotFriendly(EffectCauser, OtherActor) == false)
+	{
+		// Friendly actor so ignore
+		return;
+	}
 	if (!bHit)
 	{
 		PlayImpactEffects();	

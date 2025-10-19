@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CopilotDiffPersistence">
+    <option name="pendingDiffs">
+      <map>
+        <entry key="$PROJECT_DIR$/Source/Aura/Public/AbilitySystem/AbilityTasks/TargetDataUnderMouse.h">
+          <value>
+            <PendingDiffInfo>
+              <option name="filePath" value="$PROJECT_DIR$/Source/Aura/Public/AbilitySystem/AbilityTasks/TargetDataUnderMouse.h" />
+              <option name="originalContent" value="// Fill out your copyright notice in the Description page of Project Settings.&#10;&#10;#pragma once&#10;&#10;#include &quot;CoreMinimal.h&quot;&#10;#include &quot;Abilities/Tasks/AbilityTask.h&quot;&#10;#include &quot;TargetDataUnderMouse.generated.h&quot;&#10;&#10;DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMouseTargetDataSignature, const FGameplayAbilityTargetDataHandle&amp;, DataHandle);&#10;&#10;/**&#10; * &#10; */&#10;UCLASS()&#10;class AURA_API UTargetDataUnderMouse : public UAbilityTask&#10;{&#10;&#9;GENERATED_BODY()&#10;&#10;&#10;public:&#10;&#9;UFUNCTION(BlueprintCallable, Category = &quot;Ability|Tasks&quot;, meta = (HidePin = &quot;OwningAbility&quot;, DefaultToSelf = &quot;OwningAbility&quot;, BlueprintInternalUseOnly = &quot;true&quot;, DisplayName = &quot;Target Data Under Mouse&quot;))&#10;&#9;static UTargetDataUnderMouse* CreateTargetDataUnderMouse(UGameplayAbility* OwningAbility);&#10;&#10;&#10;&#9;UPROPERTY(BlueprintAssignable)&#10;&#9;FMouseTargetDataSignature ValidData;&#10;&#10;private:&#10;&#9;virtual void Activate() override;&#10;&#9;void SendMouseCursorData();&#10;&#10;&#9;void OnTargetDataReplicatedCallback(const FGameplayAbilityTargetDataHandle&amp; DataHandle, FGameplayTag ActivationTag);&#10;};&#10;" />
+              <option name="updatedContent" value="// Fill out your copyright notice in the Description page of Project Settings.&#10;&#10;#pragma once&#10;&#10;#include &quot;CoreMinimal.h&quot;&#10;#include &quot;Abilities/Tasks/AbilityTask.h&quot;&#10;#include &quot;TargetDataUnderMouse.generated.h&quot;&#10;&#10;DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMouseTargetDataSignature, const FGameplayAbilityTargetDataHandle&amp;, DataHandle);&#10;&#10;/**&#10; * &#10; */&#10;UCLASS()&#10;class AURA_API UTargetDataUnderMouse : public UAbilityTask&#10;{&#10;&#9;GENERATED_BODY()&#10;&#10;&#10;public:&#10;&#9;UFUNCTION(BlueprintCallable, Category = &quot;Ability|Tasks&quot;, meta = (HidePin = &quot;OwningAbility&quot;, DefaultToSelf = &quot;OwningAbility&quot;, BlueprintInternalUseOnly = &quot;true&quot;, DisplayName = &quot;Target Data Under Mouse&quot;))&#10;&#9;static UTargetDataUnderMouse* CreateTargetDataUnderMouse(UGameplayAbility* OwningAbility);&#10;&#10;&#10;&#9;UPROPERTY(BlueprintAssignable)&#10;&#9;FMouseTargetDataSignature ValidData;&#10;&#10;private:&#10;&#9;virtual void Activate() override;&#10;&#9;void SendTargetData();&#10;&#9;FGameplayAbilityTargetDataHandle GetTargetData();&#10;&#9;void OnTargetDataReplicatedCallback(const FGameplayAbilityTargetDataHandle&amp; DataHandle, FGameplayTag ActivationTag);&#10;};" />
+            </PendingDiffInfo>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+</project>
